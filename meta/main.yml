@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: nipil
+  description: >-
+    Add specified user, with its authorized_keys and add snippet to allow ssh, then reload sshd
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - opencode
+    - gitweb
+dependencies: []

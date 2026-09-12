@@ -1,0 +1,15 @@
+---
+- name: Prepare
+  hosts: user_ssh
+  gather_facts: true
+
+  tasks:
+    - name: Setup packages
+      ansible.builtin.apt:
+        update_cache: true
+        name: openssh-server
+
+    - name: Setup user
+      ansible.builtin.user:
+        name: "{{ user_ssh_name }}"
+        state: present
