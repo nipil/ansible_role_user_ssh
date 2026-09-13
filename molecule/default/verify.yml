@@ -5,4 +5,61 @@
   hosts: user_ssh
   gather_facts: false # Quicker, if you do not need facts
 
-  tasks: []
+  tasks:
+    - name: Check that the sshd_config.d snippet exists
+      ansible.builtin.stat:
+        path: "/etc/ssh/sshd_config.d/{{ user_ssh_name }}.conf"
+      register: user_ssh_snippet
+
+    - name: Assert that the sshd_config.d snippet exists
+      ansible.builtin.assert:
+        that:
+          - user_ssh_snippet.stat.exists
+          - user_ssh_snippet.stat.isreg
+        fail_msg: sshd_config.d snippet for {{ user_ssh_name }} is missing
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Check that the ssh service is running
+      ansible.builtin.assert:
+        that:
+          - "'ssh.service' in ansible_facts.services"
+          - ansible_facts.services['ssh.service'].state == 'running'
+        fail_msg: ssh.service is not running
+
+    - name: Read the effective sshd configuration
+      become: true
+      ansible.builtin.command: sshd -T
+      changed_when: false
+      register: sshd_t
+
+    - name: Check that the user is allowed in the effective sshd configuration
+      become: true
+      ansible.builtin.assert:
+        that:
+          - "'allowusers ' ~ user_ssh_name in sshd_t.stdout"
+        fail_msg: >-
+          {{ user_ssh_name }} not listed in `sshd -T` allowed users:
+          the sshd_config.d snippet was not applied
+
+    - name: Look up the user's home directory
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ user_ssh_name }}"
+      register: user_ssh_getent
+
+    - name: Read authorized_keys for the user
+      become: true
+      ansible.builtin.slurp:
+        path: "{{ user_ssh_getent.ansible_facts.getent_passwd[user_ssh_name][4] }}/.ssh/authorized_keys"
+      register: user_ssh_authorized_keys
+
+    - name: Check that each configured key is present in authorized_keys
+      loop: "{{ user_ssh_keys }}"
+      ansible.builtin.assert:
+        that:
+          - "item in (user_ssh_authorized_keys.content | b64decode)"
+        fail_msg: >-
+          key '{{ item }}' is not present in
+          {{ user_ssh_getent.ansible_facts.getent_passwd[user_ssh_name][4] }}/.ssh/authorized_keys
