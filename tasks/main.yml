@@ -1,41 +1,6 @@
 ---
-- name: Validate user_ssh_name
-  ansible.builtin.assert:
-    that:
-      - user_ssh_name is defined
-      - user_ssh_name is string
-    fail_msg: user_ssh_name must be a string
-
-- name: Validate user_ssh_keys
-  ansible.builtin.assert:
-    that:
-      - user_ssh_keys is defined
-      - user_ssh_keys is sequence
-      - user_ssh_keys is not string
-    fail_msg: user_ssh_keys must be a list
-
-- name: Validate each user_ssh_key
-  loop: "{{ user_ssh_keys }}"
-  ansible.builtin.assert:
-    that:
-      - item is string
-    fail_msg: each user_ssh_key must be a string
-
-- name: Validate user_ssh_keys_replace
-  ansible.builtin.assert:
-    that:
-      - user_ssh_keys_replace is defined
-      - user_ssh_keys_replace is boolean
-    fail_msg: user_ssh_keys_replace must be a boolean
-
-- name: Populate service facts
-  ansible.builtin.service_facts:
-
-- name: Verify that sshd is available
-  ansible.builtin.assert:
-    that:
-      - "'ssh.service' in ansible_facts.services"
-    fail_msg: sshd must be available
+- name: Validate role inputs
+  ansible.builtin.import_tasks: validation.yml
 
 - name: Setup authorized_keys for user
   ansible.posix.authorized_key:
