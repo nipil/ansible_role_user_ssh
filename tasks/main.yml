@@ -27,7 +27,7 @@
 - name: Verify that sshd is available
   ansible.builtin.assert:
     that:
-      - "'ssh' in ansible_facts.services"
+      - "'ssh.service' in ansible_facts.services"
     fail_msg: sshd must be available
 
 - name: Setup authorized_keys for user
