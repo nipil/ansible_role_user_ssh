@@ -4,15 +4,13 @@
 ---
 # Dependency management (download roles/collections)
 dependency:
-  name: galaxy
-  options:
-    ### install with `molecule dependency` if manually needed
-    # force: true
-    ignore-certs: false
-    ignore-errors: false
-    # path are relative to project (role) root
-    role-file: molecule/requirements-roles.yml
-    requirements-file: molecule/requirements-collections.yml
+  # galaxy name does not honor env: ... ANSIBLE_COLLECTIONS_PATH still ~/.ansible and other env not defined
+  # shell does not honor env: same default values, no custom environment variable
+  name: shell
+  # produces a warning that "specified path is not in configured configured Ansible collections paths"
+  command: >-
+    ansible-galaxy collection install --collections-path molecule/default/collections --requirements-file molecule/requirements-collections.yml &&
+    ansible-galaxy role install --roles-path molecule/default/roles --role-file molecule/requirements-roles.yml
 
 ansible:
   cfg:
