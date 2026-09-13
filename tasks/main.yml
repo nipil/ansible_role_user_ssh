@@ -41,7 +41,7 @@
       {% endfor %}
 
 - name: Prepare sshd_config snippet to allow user
-  notify: Restart sshd - role {{ role_name }}
+  notify: Reload sshd - role {{ role_name }}
   ansible.builtin.copy:
     content: "AllowUsers {{ user_ssh_name }}"
     dest: "{{ user_ssh_sshd_config_d }}/{{ user_ssh_name }}.conf"
