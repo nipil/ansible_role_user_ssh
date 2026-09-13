@@ -3,7 +3,8 @@
 # Molecule calls this playbook with `molecule converge`.
 - name: Converge
   hosts: user_ssh
-  gather_facts: true # Disable if your role does not rely on facts
+  # Disable to trigger more error related to not-yet-collected facts
+  gather_facts: false
   tasks:
     - name: Apply role under test
       ansible.builtin.import_role:
