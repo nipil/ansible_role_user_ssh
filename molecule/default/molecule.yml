@@ -1,3 +1,6 @@
+# SCHEMA: https://github.com/ansible/molecule/blob/main/src/molecule/data/molecule.json
+# DOC: https://docs.ansible.com/projects/molecule/ansible-native/
+# DOC: https://docs.ansible.com/projects/molecule/configuration/
 ---
 # Dependency management (download roles/collections)
 dependency:
