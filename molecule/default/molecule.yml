@@ -25,8 +25,6 @@ ansible:
   env:
     ANSIBLE_FORCE_COLOR: "1"
     ANSIBLE_LOAD_CALLBACK_PLUGINS: "1"
-    # MOLECULE_PROJECT_DIRECTORY is the folder where `molecule` dir is
-    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}/.."
 
   executor:
     backend: ansible-playbook
