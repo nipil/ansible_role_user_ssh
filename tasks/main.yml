@@ -21,6 +21,13 @@
       - item is string
     fail_msg: each user_ssh_key must be a string
 
+- name: Validate user_ssh_keys_replace
+  ansible.builtin.assert:
+    that:
+      - user_ssh_keys_replace is defined
+      - user_ssh_keys_replace is boolean
+    fail_msg: user_ssh_keys_replace must be a boolean
+
 - name: Populate service facts
   ansible.builtin.service_facts:
 
@@ -34,7 +41,7 @@
   ansible.posix.authorized_key:
     user: "{{ user_ssh_name }}"
     state: present
-    exclusive: true
+    exclusive: "{{ user_ssh_keys_replace }}"
     key: |
       {% for user_ssh_key in user_ssh_keys %}
       {{ user_ssh_key }}
