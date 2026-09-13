@@ -1,3 +1,7 @@
 # collections required by molecule scenarios
 ---
-collections: []
+collections:
+  # for the role
+  - ansible.posix
+  # for molecule testing
+  - containers.podman

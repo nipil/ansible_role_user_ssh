@@ -19,3 +19,6 @@ galaxy_info:
     - opencode
     - gitweb
 dependencies: []
+
+collections:
+  - ansible.posix
