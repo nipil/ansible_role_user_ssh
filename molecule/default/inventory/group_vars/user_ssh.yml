@@ -1,1 +1,4 @@
 user_ssh_name: test
+
+user_ssh_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAwgIDA26wE/nkyLTVGOUNH30rVIx6fVYf4yjevgvM/q molecule

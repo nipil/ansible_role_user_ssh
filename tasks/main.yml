@@ -12,6 +12,29 @@
       {{ user_ssh_key }}
       {% endfor %}
 
+- name: Ensure authorized_keys exists when no keys are configured
+  when: user_ssh_keys | length == 0
+  block:
+    - name: Resolve home directory for {{ user_ssh_name }}
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ user_ssh_name }}"
+      register: user_ssh_home
+
+    - name: Create .ssh directory in home of {{ user_ssh_name }}
+      ansible.builtin.file:
+        path: "{{ user_ssh_home.ansible_facts.getent_passwd[user_ssh_name][4] }}/.ssh"
+        state: directory
+        owner: "{{ user_ssh_name }}"
+        mode: "700"
+
+    - name: Create authorized_keys file
+      ansible.builtin.file:
+        path: "{{ user_ssh_home.ansible_facts.getent_passwd[user_ssh_name][4] }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ user_ssh_name }}"
+        mode: "600"
+
 - name: Prepare sshd_config snippet to allow user
   notify: Reload sshd - role {{ role_name }}
   ansible.builtin.copy:
