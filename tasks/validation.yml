@@ -28,20 +28,19 @@
       - user_ssh_keys_replace is boolean
     fail_msg: user_ssh_keys_replace must be a boolean
 
+- name: Gather os family facts
+  when: ansible_facts["os_family"] is not defined
+  ansible.builtin.setup:
+    gather_subset:
+      - os_family
+
 - name: Validate supported OS
   ansible.builtin.assert:
     that:
-      - >-
-        ansible_distribution in ['Debian', 'Ubuntu'] and
-        (
-          (ansible_distribution == 'Debian' and ansible_distribution_release in ['bookworm', 'trixie']) or
-          (ansible_distribution == 'Ubuntu' and ansible_distribution_release in ['jammy', 'noble'])
-        )
+      - ansible_facts["os_family"] is defined
+      - ansible_facts["os_family"] == 'Debian'
     fail_msg: >-
-      Role supports Debian bookworm/trixie and Ubuntu jammy/noble only;
-      detected {{ ansible_distribution }} {{ ansible_distribution_release }}
-      ({{ ansible_distribution_version }})
-  when: ansible_os_family is defined
+      Role supports Debian and Ubuntu only
 
 - name: Populate service facts
   ansible.builtin.service_facts:
